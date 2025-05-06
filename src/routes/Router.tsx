@@ -8,9 +8,21 @@ import Loadable from "@/views/common/loadable/Loadable";
 const MainLayout = Loadable(
   lazy(() => import("../layouts/main-layout/MainLayout"))
 );
+const BlankLayout = Loadable(
+  lazy(() => import("../layouts/blank-layout/BlankLayout"))
+);
 
 // Main Pages
+const HomePage = Loadable(lazy(() => import("../views/home/HomePage")));
 const ViewPosts = Loadable(lazy(() => import("../views/posts/ViewPosts")));
+const ViewWorkouts = Loadable(
+  lazy(() => import("../views/workouts/ViewWorkouts"))
+);
+const ViewAchievements = Loadable(
+  lazy(() => import("../views/achievements/ViewAchievements"))
+);
+const ViewQuiz = Loadable(lazy(() => import("../views/quiz/ViewQuiz")));
+const Settings = Loadable(lazy(() => import("../views/settings/Settings")));
 
 // // Dashboard
 // const Dashboard = Loadable(lazy(() => import("../views/dashboards/Dashboard")));
@@ -21,7 +33,7 @@ const ViewPosts = Loadable(lazy(() => import("../views/posts/ViewPosts")));
 //   lazy(() => import("../views/auth/register/Register"))
 // );
 // const Logout = Loadable(lazy(() => import("../views/auth/logout/Logout")));
-// const Error = Loadable(lazy(() => import("../views/auth/error/Error")));
+const PageNotFound = Loadable(lazy(() => import("../views/404/PageNotFound")));
 
 // // admin
 // const ViewAllCourses = Loadable(
@@ -36,7 +48,12 @@ const Router = [
     path: "/",
     element: <MainLayout />,
     children: [
-      { path: "/", exact: true, element: <ViewPosts /> },
+      { path: "/", exact: true, element: <HomePage /> },
+      { path: "/posts", exact: true, element: <ViewPosts /> },
+      { path: "/workouts", exact: true, element: <ViewWorkouts /> },
+      { path: "/achievements", exact: true, element: <ViewAchievements /> },
+      { path: "/quiz", exact: true, element: <ViewQuiz /> },
+      { path: "/settings", exact: true, element: <Settings /> },
       { path: "*", element: <Navigate to="/404" /> },
     ],
   },
@@ -50,17 +67,17 @@ const Router = [
   //     { path: "*", element: <Navigate to="/404" /> },
   //   ],
   // },
-  // {
-  //   path: "/",
-  //   element: <BlankLayout />,
-  //   children: [
-  //     { path: "/login", exact: true, element: <Login /> },
-  //     { path: "/register", exact: true, element: <Register /> },
-  //     { path: "/logout", exact: true, element: <Logout /> },
-  //     { path: "/404", element: <Error /> },
-  //     { path: "*", element: <Navigate to="/404" /> },
-  //   ],
-  // },
+  {
+    path: "/",
+    element: <BlankLayout />,
+    children: [
+      // { path: "/login", exact: true, element: <Login /> },
+      // { path: "/register", exact: true, element: <Register /> },
+      // { path: "/logout", exact: true, element: <Logout /> },
+      { path: "/404", element: <PageNotFound /> },
+      { path: "*", element: <Navigate to="/404" /> },
+    ],
+  },
 ];
 
 const router = createBrowserRouter(Router, { basename: "/" });

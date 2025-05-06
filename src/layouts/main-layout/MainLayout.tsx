@@ -7,7 +7,10 @@ export default function Layout() {
     <SidebarProvider>
       <AppSidebar />
       <main>
-        <SidebarTrigger />
+        <div className="bg-zinc-700 w-fit p-1 rounded-e-lg shadow-md shadow-border">
+          <SidebarTrigger />
+        </div>
+
         <Outlet />
       </main>
     </SidebarProvider>

@@ -1,29 +1,41 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import {
+  Home,
+  MessageCircleHeart,
+  Dumbbell,
+  Trophy,
+  Activity,
+  Settings,
+} from "lucide-react";
 // Menu items.
 export const menuItems = [
   {
     title: "Home",
-    url: "#",
+    url: "/",
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    title: "Posts",
+    url: "/posts",
+    icon: MessageCircleHeart,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
+    title: "Workouts",
+    url: "/workouts",
+    icon: Dumbbell,
   },
   {
-    title: "Search",
-    url: "#",
-    icon: Search,
+    title: "Achievements",
+    url: "/achievements",
+    icon: Trophy,
+  },
+  {
+    title: "Quiz",
+    url: "/quiz",
+    icon: Activity,
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/settings",
     icon: Settings,
   },
 ];
