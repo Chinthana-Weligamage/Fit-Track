@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
-const AddPostModal = () => {
+const AddAchievementModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -20,13 +20,15 @@ const AddPostModal = () => {
           className="flex flex-row items-center justify-center gap-3 bg-amber-400"
         >
           <Plus />
-          Add Post
+          Add Achievement
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Post</DialogTitle>
-          <DialogDescription>Add Post form will be here</DialogDescription>
+          <DialogTitle>Add Achievement</DialogTitle>
+          <DialogDescription>
+            Add Achievement form will be here
+          </DialogDescription>
         </DialogHeader>
         <div className="flex items-center space-x-2"></div>
         <DialogFooter className="sm:justify-start">
@@ -41,4 +43,4 @@ const AddPostModal = () => {
   );
 };
 
-export default AddPostModal;
+export default AddAchievementModal;

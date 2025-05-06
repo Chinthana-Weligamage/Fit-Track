@@ -9,20 +9,22 @@ import {
 } from "@/components/ui/card";
 import { Heart, CornerUpRight } from "lucide-react";
 import { Button } from "../ui/button";
-import { PostCard_t } from "@/types/CardTypes";
+import type { PostCard } from "@/types/CardTypes";
+import MetadataBadge from "../badges/MetadataBadge";
 
-const PostCard: FC<PostCard_t> = ({ data }) => {
+const PostCard: FC<PostCard> = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
   return (
     <div className="flex flex-col items-center justify-center w-full h-full">
       <Card>
+        {post.metadata && <MetadataBadge metadata={post.metadata} />}
         <CardHeader>
-          <CardTitle>{data.title}</CardTitle>
-          <CardDescription>{data.description}</CardDescription>
+          <CardTitle>{post.title}</CardTitle>
+          <CardDescription>{post.description}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center">
-            {data.imageUrls.map((url, index) => (
+            {post.imageUrls.map((url, index) => (
               <img
                 key={index}
                 src={url}

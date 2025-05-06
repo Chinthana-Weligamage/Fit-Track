@@ -29,7 +29,7 @@ export const menuItems = [
     icon: Trophy,
   },
   {
-    title: "Quiz",
+    title: "Fit-Quiz",
     url: "/quiz",
     icon: Activity,
   },
