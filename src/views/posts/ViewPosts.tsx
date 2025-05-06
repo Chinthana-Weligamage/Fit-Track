@@ -1,4 +1,4 @@
-import DisplayCard from "@/components/cards/DisplayCard";
+import PostCard from "@/components/cards/PostCard";
 
 const samplePosts = [
   {
@@ -29,7 +29,7 @@ const ViewPosts = () => {
   return (
     <div className="flex flex-col items-center w-full max-w-2xl mx-auto my-10 gap-6 px-4 overflow-y-auto">
       {samplePosts.map((post, index) => (
-        <DisplayCard key={index} data={post} />
+        <PostCard key={index} data={post} />
       ))}
     </div>
   );

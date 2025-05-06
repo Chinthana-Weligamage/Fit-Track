@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,16 +9,9 @@ import {
 } from "@/components/ui/card";
 import { Heart, CornerUpRight } from "lucide-react";
 import { Button } from "../ui/button";
+import { PostCard_t } from "@/types/CardTypes";
 
-interface DisplayCardProps {
-  data: {
-    title: string;
-    description: string;
-    imageUrls: string[];
-  };
-}
-
-const DisplayCard: React.FC<DisplayCardProps> = ({ data }) => {
+const PostCard: FC<PostCard_t> = ({ data }) => {
   const [isLiked, setIsLiked] = useState(false);
   return (
     <div className="flex flex-col items-center justify-center w-full h-full">
@@ -64,4 +57,4 @@ const DisplayCard: React.FC<DisplayCardProps> = ({ data }) => {
   );
 };
 
-export default DisplayCard;
+export default PostCard;
