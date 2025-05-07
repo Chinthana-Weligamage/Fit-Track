@@ -28,10 +28,8 @@ const Settings = Loadable(lazy(() => import("../views/settings/Settings")));
 // const Dashboard = Loadable(lazy(() => import("../views/dashboards/Dashboard")));
 
 // // authentication
-// const Login = Loadable(lazy(() => import("../views/auth/login/Login")));
-// const Register = Loadable(
-//   lazy(() => import("../views/auth/register/Register"))
-// );
+const Login = Loadable(lazy(() => import("../views/auth/Login")));
+const Register = Loadable(lazy(() => import("../views/auth/Register")));
 // const Logout = Loadable(lazy(() => import("../views/auth/logout/Logout")));
 const PageNotFound = Loadable(lazy(() => import("../views/404/PageNotFound")));
 
@@ -59,7 +57,7 @@ const Router = [
   },
   // {
   //   path: "/",
-  //   element: <AdminLayout />,
+  //   element: <BlankLayout />,
   //   children: [
   //     { path: "/admin", exact: true, element: <Dashboard /> },
   //     { path: "/admin/courses", exact: true, element: <ViewAllCourses /> },
@@ -71,8 +69,8 @@ const Router = [
     path: "/",
     element: <BlankLayout />,
     children: [
-      // { path: "/login", exact: true, element: <Login /> },
-      // { path: "/register", exact: true, element: <Register /> },
+      { path: "/login", exact: true, element: <Login /> },
+      { path: "/register", exact: true, element: <Register /> },
       // { path: "/logout", exact: true, element: <Logout /> },
       { path: "/404", element: <PageNotFound /> },
       { path: "*", element: <Navigate to="/404" /> },

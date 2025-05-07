@@ -37,6 +37,7 @@ const HomePage = () => {
           <motion.div whileHover={{ scale: 1.05 }}>
             <Button
               size={"lg"}
+              onClick={() => (window.location.href = "/register")}
               className="bg-white text-black font-bold py-3 px-5 rounded-full shadow-lg hover:shadow-xl transition duration-300"
             >
               Create Account
@@ -45,6 +46,7 @@ const HomePage = () => {
           <motion.div whileHover={{ scale: 1.05 }}>
             <Button
               size={"lg"}
+              onClick={() => (window.location.href = "/login")}
               className="bg-black text-white font-bold py-3 px-5 rounded-full shadow-lg hover:shadow-xl transition duration-300"
             >
               Login to Fit-Track!
