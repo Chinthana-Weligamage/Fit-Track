@@ -48,7 +48,7 @@ export function LoginForm({
                 <Input id="password" type="password" required />
               </div>
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full bg-amber-400">
+                <Button type="submit" className="w-full bg-yellow-400">
                   Login
                 </Button>
                 <Button variant="outline" className="w-full">

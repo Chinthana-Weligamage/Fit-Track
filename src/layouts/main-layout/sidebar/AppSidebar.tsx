@@ -29,7 +29,7 @@ const AppSidebar = () => {
                     asChild
                     className={
                       pathname === item.url
-                        ? "bg-amber-400 hover:bg-zinc-500 text-zinc-900"
+                        ? "bg-yellow-400 hover:bg-zinc-500 text-zinc-900"
                         : ""
                     }
                   >
