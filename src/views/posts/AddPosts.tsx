@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import AddPostForm from "@/components/forms/post/AddPostForm";
 
 const AddPostModal = () => {
   return (
@@ -25,17 +26,12 @@ const AddPostModal = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Post</DialogTitle>
-          <DialogDescription>Add Post form will be here</DialogDescription>
+          <DialogTitle className="text-center">Add Post</DialogTitle>
+          {/* <DialogDescription>Add Post form will be here</DialogDescription> */}
         </DialogHeader>
-        <div className="flex items-center space-x-2"></div>
-        <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
-        </DialogFooter>
+        <div className="flex items-center space-x-2">
+          <AddPostForm />
+        </div>
       </DialogContent>
     </Dialog>
   );

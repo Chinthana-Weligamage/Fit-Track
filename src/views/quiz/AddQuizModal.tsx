@@ -1,15 +1,13 @@
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import AddQuizForm from "@/components/forms/quiz/AddQuizForm";
 
 const AddQuizModal = () => {
   return (
@@ -23,19 +21,13 @@ const AddQuizModal = () => {
           Add Quiz
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Add Quiz</DialogTitle>
-          <DialogDescription>Add Quiz form will be here</DialogDescription>
+          <DialogTitle className="text-center">Add Quiz</DialogTitle>
         </DialogHeader>
-        <div className="flex items-center space-x-2"></div>
-        <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
-        </DialogFooter>
+        <div className="flex items-center space-x-2">
+          <AddQuizForm />
+        </div>
       </DialogContent>
     </Dialog>
   );

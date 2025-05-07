@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import AddAchievementForm from "@/components/forms/achievement/AddAchievementForm";
 
 const AddAchievementModal = () => {
   return (
@@ -25,19 +26,14 @@ const AddAchievementModal = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Achievement</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-center">Add Achievement</DialogTitle>
+          {/* <DialogDescription>
             Add Achievement form will be here
-          </DialogDescription>
+          </DialogDescription> */}
         </DialogHeader>
-        <div className="flex items-center space-x-2"></div>
-        <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
-        </DialogFooter>
+        <div className="flex items-center space-x-2">
+          <AddAchievementForm />
+        </div>
       </DialogContent>
     </Dialog>
   );

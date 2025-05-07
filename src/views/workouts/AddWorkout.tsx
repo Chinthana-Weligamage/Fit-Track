@@ -2,7 +2,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -10,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import AddWorkoutForm from "@/components/forms/workout/AddWorkoutForm";
 
 const AddWorkoutModal = () => {
   return (
@@ -25,17 +25,11 @@ const AddWorkoutModal = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Workout</DialogTitle>
-          <DialogDescription>Add Workout form will be here</DialogDescription>
+          <DialogTitle className="text-center">Add Workout</DialogTitle>
         </DialogHeader>
-        <div className="flex items-center space-x-2"></div>
-        <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
-        </DialogFooter>
+        <div className="flex items-center space-x-2">
+          <AddWorkoutForm />
+        </div>
       </DialogContent>
     </Dialog>
   );
