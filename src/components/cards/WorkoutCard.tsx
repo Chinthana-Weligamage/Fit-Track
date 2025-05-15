@@ -42,7 +42,7 @@ const WorkoutCard: FC<WorkoutCardProps> = ({ workout }) => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full">
-      <Card>
+      <Card className="w-full max-w-md">
         {workout.metadata && <MetadataBadge metadata={workout.metadata} />}
         <CardHeader>
           <CardTitle className="text-center">{workout.name}</CardTitle>
@@ -52,13 +52,19 @@ const WorkoutCard: FC<WorkoutCardProps> = ({ workout }) => {
         </CardHeader>
 
         <CardContent>
-          <div className="flex flex-col px-10 py-3 items-center justify-center">
+          <div className="flex flex-col px-6 py-4 items-center justify-center">
             <Carousel setApi={setApi} className="w-full max-w-xs">
               <CarouselContent>
                 {workout.exercises.map((exercise, index) => (
                   <CarouselItem key={`${exercise.name}-${index}`}>
                     <Card className="w-full h-full flex flex-col items-center justify-center bg-amber-400">
-                      <CardContent className="flex flex-col items-center justify-center aspect-square p-6 gap-2">
+                      <CardContent className="flex flex-col items-center justify-center aspect-square p-4 gap-2">
+                        <img
+                          src={exercise.imageUrl || "/fallback-image.png"}
+                          alt={exercise.name || "Exercise Image"}
+                          className="w-32 h-32 object-contain rounded-md shadow-md"
+                          loading="lazy"
+                        />
                         <span className="text-2xl font-semibold text-center text-zinc-900">
                           {exercise.name}
                         </span>
