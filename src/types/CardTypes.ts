@@ -11,6 +11,7 @@ export interface Post {
 }
 
 export interface Exercise {
+  imageUrl: string;
   name: string;
   description: string;
   order: number;
@@ -26,6 +27,7 @@ export interface Workout {
   name: string;
   description: string;
   exercises: Exercise[];
+  imageUrl: string[];
 }
 
 export interface Achievement {
@@ -33,7 +35,14 @@ export interface Achievement {
   metadata?: Metadata;
   description: string;
   imageUrls: string[];
+  videoUrl?: string | null; // Changed from boolean to string | null
   video?: string | File | null;
+}
+
+export interface AchievementCardProps {
+  achievement: Achievement;
+  onUpdate?: (updatedAchievement: Achievement) => void;
+  onDelete?: (id: string) => void;
 }
 
 export interface AchievementCard {

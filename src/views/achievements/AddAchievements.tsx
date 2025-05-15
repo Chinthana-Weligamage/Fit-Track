@@ -1,9 +1,8 @@
+"use client";
+
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -18,22 +17,17 @@ const AddAchievementModal = () => {
       <DialogTrigger asChild>
         <Button
           size={"lg"}
-          className="flex flex-row items-center justify-center gap-3 bg-amber-400"
+          className="flex flex-row items-center justify-center gap-3 bg-amber-400 hover:bg-amber-500"
         >
           <Plus />
           Add Achievement
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[625px]">
         <DialogHeader>
           <DialogTitle className="text-center">Add Achievement</DialogTitle>
-          {/* <DialogDescription>
-            Add Achievement form will be here
-          </DialogDescription> */}
         </DialogHeader>
-        <div className="flex items-center space-x-2">
-          <AddAchievementForm />
-        </div>
+        <AddAchievementForm userId="1" />
       </DialogContent>
     </Dialog>
   );
