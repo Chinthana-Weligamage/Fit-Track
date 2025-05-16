@@ -6,9 +6,22 @@ import { useEffect } from "react";
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  const handleGoogleLogin = () => {
-    // Use window.location.href for OAuth flow (not Axios)
-    window.location.href = "http://localhost:8080/api/auth/google";
+  const handleGoogleLogin = async () => {
+    window.location.href = API_SERVICES.GoogleLogin;
+    // const authTocken = localStorage.getItem("authToken");
+    try {
+      const res = await axios.get(API_SERVICES.GoogleLogin);
+      if (res.status === 200) {
+        // Redirect to Google OAuth
+        console.log("Redirecting to Google OAuth...");
+      } else {
+        console.error("Failed to initiate Google login");
+        // Handle error (show message to user)
+      }
+    } catch (error) {
+      console.error("Error during Google login:", error);
+      // Handle error (show message to user)
+    }
   };
 
   // Handle the redirect back from Google OAuth
