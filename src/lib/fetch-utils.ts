@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const fetchWorkouts = async () => {
   try {
-    const response = await axios.get(API_SERVICES.getWorkoutPlans);
+    const response = await axios.get(API_SERVICES.WorkoutPlans);
     console.log("Fetched workouts:", response.data);
     return response.data;
   } catch (error) {
@@ -13,7 +13,7 @@ export const fetchWorkouts = async () => {
 
 export const fetchAchievements = async () => {
   try {
-    const response = await axios.get(API_SERVICES.getAchievements);
+    const response = await axios.get(API_SERVICES.Achievements);
     console.log("Fetched achievements:", response.data);
     return response.data;
   } catch (error) {
@@ -23,7 +23,7 @@ export const fetchAchievements = async () => {
 
 export const fetchQuizs = async () => {
   try {
-    const response = await axios.get(API_SERVICES.getQuizs);
+    const response = await axios.get(API_SERVICES.Quizs);
     console.log("Fetched quizs:", response.data);
     return response.data;
   } catch (error) {
@@ -34,7 +34,7 @@ export const fetchQuizs = async () => {
 export const fetchWorkoutComments = async (workoutPlanId: string) => {
   try {
     const response = await axios.get(
-      API_SERVICES.getWorkoutComments.replace("{workoutPlanId}", workoutPlanId)
+      API_SERVICES.WorkoutComments.replace("{workoutPlanId}", workoutPlanId)
     );
     console.log("Fetched workout comments:", response.data);
     return response.data;

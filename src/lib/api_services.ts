@@ -22,12 +22,12 @@ const API_SERVICES = {
   EmailLogin: `${BASE_URL}/api/users/login`,
 
   // Workout plans
-  getWorkoutPlans: `${BASE_URL}/api/workoutPlan`,
+  WorkoutPlans: `${BASE_URL}/api/workoutPlan`,
 
-  getAchievements: `${BASE_URL}/api/achievements`,
+  Achievements: `${BASE_URL}/api/achievements`,
 
-  getQuizs: `${BASE_URL}/api/questions`,
+  Quizs: `${BASE_URL}/api/questions`,
 
-  getWorkoutComments: `${BASE_URL}/api/workoutPlans/{workoutPlanId}/comments`,
+  WorkoutComments: `${BASE_URL}/api/workoutPlans/{workoutPlanId}/comments`,
 };
 export default API_SERVICES;
