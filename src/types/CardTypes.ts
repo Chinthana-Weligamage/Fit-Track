@@ -17,6 +17,15 @@ export interface Exercise {
   order: number;
 }
 
+export interface Comment {
+  id: string;
+  userId: string;
+  content: string;
+  createdAt: string;
+  authorName: string;
+  authorImage: string;
+}
+
 export interface WorkoutCard {
   workout: Workout;
 }

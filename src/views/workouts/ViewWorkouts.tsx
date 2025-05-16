@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import WorkoutCard from "@/components/cards/WorkoutCard";
 import AddWorkoutModal from "./AddWorkout";
-import { Workout } from "@/types/CardTypes";
+import { Workout, Comment } from "@/types/CardTypes";
 import { fetchWorkouts } from "@/lib/fetch-utils";
 
 const ViewWorkouts = () => {
@@ -33,7 +33,7 @@ const ViewWorkouts = () => {
           <p className="text-lg text-gray-500">Loading workouts...</p>
         </div>
       )}
-      {workouts.map((workout, index) => (
+      {workouts?.map((workout, index) => (
         <WorkoutCard
           key={index}
           workout={{

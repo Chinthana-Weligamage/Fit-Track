@@ -21,6 +21,7 @@ const API_SERVICES = {
   getAchievements: `${BASE_URL}/api/achievements`,
 
   getQuizs: `${BASE_URL}/api/questions`,
-};
 
+  getWorkoutComments: `${BASE_URL}/api/workoutPlans/{workoutPlanId}/comments`,
+};
 export default API_SERVICES;

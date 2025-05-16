@@ -31,6 +31,18 @@ export const fetchQuizs = async () => {
   }
 };
 
+export const fetchWorkoutComments = async (workoutPlanId: string) => {
+  try {
+    const response = await axios.get(
+      API_SERVICES.getWorkoutComments.replace("{workoutPlanId}", workoutPlanId)
+    );
+    console.log("Fetched workout comments:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching workout comments:", error);
+  }
+};
+
 // export const deleteAchievement = async (id: string) => {
 //   try {
 //     await axios.delete(
