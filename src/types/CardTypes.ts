@@ -11,7 +11,7 @@ export interface Post {
 }
 
 export interface Exercise {
-  imageUrl?: string;
+  imageUrl?: string | File;
   name?: string;
   description?: string;
   order?: number;

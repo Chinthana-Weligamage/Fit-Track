@@ -3,6 +3,7 @@ import AddExerciseForm from "./AddExerciseForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios from "axios";
 import type { Workout, Exercise } from "@/types/CardTypes";
 
 const AddWorkoutForm = () => {
@@ -20,7 +21,7 @@ const AddWorkoutForm = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!workoutData.name?.trim()) {
@@ -33,15 +34,39 @@ const AddWorkoutForm = () => {
       return;
     }
 
-    console.log("Submitted Workout:", workoutData);
+    try {
+      const formData = new FormData();
+      formData.append("name", workoutData.name || "");
+      formData.append("description", workoutData.description || "");
+      workoutData.exercises?.forEach((exercise, index) => {
+        formData.append(`exercises[${index}]`, JSON.stringify(exercise));
+      });
+
+      const response = await axios.post("/api/workouts", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.status === 200) {
+        alert("Workout submitted successfully!");
+      } else {
+        alert("Failed to submit workout. Please try again.");
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert(
+        "An error occurred while submitting the workout. Please try again."
+      );
+    }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className=" mx-auto w-full px-10 py-10 bg-zinc-900 text-white rounded-md grid grid-cols-2"
-    >
-      <div className="col-span-1 flex flex-col gap-5 p-5 h-full">
+    <div className=" mx-auto w-full px-10 py-10 bg-zinc-900 text-white rounded-md grid grid-cols-2">
+      <form
+        className="col-span-1 flex flex-col gap-5 p-5 h-full"
+        onSubmit={handleSubmit}
+      >
         <div>
           <Label className="block mb-2">Workout Name</Label>
           <Input
@@ -104,7 +129,7 @@ const AddWorkoutForm = () => {
             Create Workout
           </Button>
         </div>
-      </div>
+      </form>
 
       <div className="col-span-1 bg-zinc-800 p-4 rounded-xl">
         <Label className="block text-center text-lg mb-5">
@@ -112,7 +137,7 @@ const AddWorkoutForm = () => {
         </Label>
         <AddExerciseForm addExercise={addExercise} />
       </div>
-    </form>
+    </div>
   );
 };
 

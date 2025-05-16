@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,17 +20,7 @@ const AddExerciseForm: React.FC<AddExerciseFormProps> = ({ addExercise }) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const uploadData = new FormData();
-    uploadData.append("file", file);
-
-    try {
-      const response = await axios.post("/api/upload", uploadData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setFormData((prev) => ({ ...prev, imageUrl: response.data.url }));
-    } catch (error) {
-      console.error("Image upload failed", error);
-    }
+    setFormData((prev) => ({ ...prev, imageUrl: file }));
   };
 
   const addNewExercise = async () => {
@@ -78,13 +67,6 @@ const AddExerciseForm: React.FC<AddExerciseFormProps> = ({ addExercise }) => {
       <div>
         <Label className="block mb-2">Upload Image</Label>
         <Input type="file" accept="image/*" onChange={handleFileChange} />
-        {formData.imageUrl && (
-          <img
-            src={formData.imageUrl || ""}
-            alt="Uploaded preview"
-            className="mt-2 h-32 rounded-md object-cover"
-          />
-        )}
       </div>
 
       <Button className="w-full bg-yellow-400" onClick={addNewExercise}>
