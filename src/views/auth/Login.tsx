@@ -2,13 +2,26 @@ import { LoginForm } from "@/components/forms/auth/login-form";
 import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useEffect } from "react";
+import axios from "axios";
+import API_SERVICES from "@/lib/api_services";
 
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  const handleGoogleLogin = () => {
-    // Use window.location.href for OAuth flow (not Axios)
-    window.location.href = "http://localhost:8080/api/auth/google";
+  const handleGoogleLogin = async () => {
+    try {
+      const res = await axios.get(API_SERVICES.GoogleLogin);
+      if (res.status === 200) {
+        // Redirect to Google OAuth
+        console.log("Redirecting to Google OAuth...");
+      } else {
+        console.error("Failed to initiate Google login");
+        // Handle error (show message to user)
+      }
+    } catch (error) {
+      console.error("Error during Google login:", error);
+      // Handle error (show message to user)
+    }
   };
 
   // Handle the redirect back from Google OAuth
@@ -27,10 +40,6 @@ const LoginPage = () => {
     }
   }, [navigate]);
 
-  const handleEmailLogin = () => {
-    window.location.href = "http://localhost:8080/api/users/login";
-  };
-
   return (
     <div className="flex min-h-svh w-full bg-yellow-400 items-center justify-center p-6 md:p-10">
       <Link
@@ -40,10 +49,7 @@ const LoginPage = () => {
         <ArrowLeft />
       </Link>
       <div className="w-full max-w-sm">
-        <LoginForm
-          handleGoogleLogin={handleGoogleLogin}
-          handleEmailLogin={handleEmailLogin}
-        />
+        <LoginForm handleGoogleLogin={handleGoogleLogin} />
       </div>
     </div>
   );

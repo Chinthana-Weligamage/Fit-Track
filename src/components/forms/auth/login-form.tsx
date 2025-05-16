@@ -17,7 +17,7 @@ import type { LoginForm } from "@/types/FormTypes";
 
 interface LoginFormProps extends React.ComponentProps<"div"> {
   handleGoogleLogin: () => void;
-  handleEmailLogin: () => void;
+  // handleEmailLogin: () => void;
 }
 
 export function LoginForm({ handleGoogleLogin }: LoginFormProps) {

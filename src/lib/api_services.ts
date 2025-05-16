@@ -8,7 +8,7 @@ const API_SERVICES = {
   Login: `${BASE_URL}/api/users/login`,
 
   // Google OAuth Endpoints
-  GoogleLogin: `${BASE_URL}/api/auth/google`,
+  GoogleLogin: `${BASE_URL}/login/google`,
   GoogleCallback: `${BASE_URL}/login/oauth2/code/google`,
   LoginSuccess: `${BASE_URL}/api/auth/login-success`,
 
