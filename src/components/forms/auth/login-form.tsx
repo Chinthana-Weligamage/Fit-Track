@@ -52,9 +52,8 @@ export function LoginForm({ handleGoogleLogin }: LoginFormProps) {
 
         const authTocken = localStorage.getItem("authToken");
         if (authTocken) {
-          console.log("Token:", authTocken);
           // Redirect to the dashboard or any other page
-          // window.location.href = "/";
+          window.location.href = "/";
         }
       } else {
         throw new Error(res.data);
