@@ -22,7 +22,7 @@ const API_SERVICES = {
   EmailLogin: `${BASE_URL}/api/users/login`,
 
   // Workout plans
-  getWorkoutPlans: `${BASE_URL}/api/workoutPlan`,
+  WorkoutPlans: `${BASE_URL}/api/workoutPlan`,
 
   getAchievements: `${BASE_URL}/api/achievements`,
 

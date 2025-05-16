@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
 import type { Workout, Exercise } from "@/types/CardTypes";
+import API_SERVICES from "@/lib/api_services";
+import { getCurrentLoggedInUser } from "@/lib/utils";
 
 const AddWorkoutForm = () => {
   const [workoutData, setWorkoutData] = useState<Workout>({});
@@ -41,12 +43,16 @@ const AddWorkoutForm = () => {
       workoutData.exercises?.forEach((exercise, index) => {
         formData.append(`exercises[${index}]`, JSON.stringify(exercise));
       });
-
-      const response = await axios.post("/api/workouts", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const user = getCurrentLoggedInUser();
+      const response = await axios.post(
+        `${API_SERVICES.WorkoutPlans}/${user.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       if (response.status === 200) {
         alert("Workout submitted successfully!");
