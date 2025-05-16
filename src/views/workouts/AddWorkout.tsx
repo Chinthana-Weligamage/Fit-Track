@@ -23,7 +23,7 @@ const AddWorkoutModal = () => {
           Add Workout
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className=" sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle className="text-center">Add Workout</DialogTitle>
         </DialogHeader>

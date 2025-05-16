@@ -1,109 +1,119 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import AddExerciseForm from "./AddExerciseForm";
-
-const formSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().optional(),
-  exercises: z
-    .array(z.string())
-    .nonempty("Please at least one item")
-    .optional(),
-});
+import axios from "axios";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import type { Workout, Exercise } from "@/types/CardTypes";
 
 const AddWorkoutForm = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      exercises: ["React"],
-    },
-  });
+  const [workoutData, setWorkoutData] = useState<Workout>({});
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      console.log(values);
-      console.log(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
-    } catch (error) {
-      console.error("Form submission error", error);
-      console.error("Failed to submit the form. Please try again.");
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setWorkoutData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const addExercise = (exercise: Exercise) => {
+    setWorkoutData((prev) => ({
+      ...prev,
+      exercises: [...(prev.exercises || []), exercise],
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!workoutData.name?.trim()) {
+      alert("Workout name is required.");
+      return;
     }
-  }
 
-  // const ExerciseCard = () => {};
+    if (workoutData.exercises?.length === 0) {
+      alert("Please add at least one exercise.");
+      return;
+    }
+
+    console.log("Submitted Workout:", workoutData);
+  };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-5 mx-auto w-full px-10"
-      >
-        <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-12">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Workout Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" type="" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="col-span-12">
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" type="text" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+    <form
+      onSubmit={handleSubmit}
+      className=" mx-auto w-full px-10 py-10 bg-zinc-900 text-white rounded-md grid grid-cols-2"
+    >
+      <div className="col-span-1 flex flex-col gap-5 p-5 h-full">
+        <div>
+          <Label className="block mb-2">Workout Name</Label>
+          <Input
+            type="text"
+            name="name"
+            value={workoutData.name || ""}
+            onChange={handleChange}
+            className="w-full p-2 rounded bg-zinc-800 text-white"
+          />
         </div>
 
-        <FormField
-          control={form.control}
-          name="exercises"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="mb-3 text-center">Exercises</FormLabel>
-              <AddExerciseForm />
-              {/* <FormDescription>Select multiple options.</FormDescription> */}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className="w-full">
-          Create Workout
-        </Button>
-      </form>
-    </Form>
+        <div>
+          <Label className="block mb-2">Description</Label>
+          <Input
+            type="text"
+            name="description"
+            value={workoutData.description || ""}
+            onChange={handleChange}
+            className="w-full p-2 rounded bg-zinc-800 text-white"
+          />
+        </div>
+
+        <div>
+          <table className="mt-2 w-full text-sm text-left text-amber-400">
+            <thead>
+              <tr>
+                <th className="px-4 py-2">#</th>
+                <th className="px-4 py-2">Exercise Name</th>
+                <th className="px-4 py-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(workoutData.exercises || []).map((ex, idx) => (
+                <tr key={idx} className="border-t border-amber-400">
+                  <td className="px-4 py-2">{idx + 1}</td>
+                  <td className="px-4 py-2">{ex.name}</td>
+                  <td className="px-4 py-2">
+                    <Button
+                      className="bg-transparent text-white px-2 py-1 rounded-full w-6 h-6 flex items-center justify-center"
+                      onClick={() => {
+                        setWorkoutData((prev) => ({
+                          ...prev,
+                          exercises: (prev.exercises || []).filter(
+                            (_, i) => i !== idx
+                          ),
+                        }));
+                      }}
+                    >
+                      x
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex items-end justify-center h-full">
+          <Button className="w-full bg-yellow-400 mb-9" type="submit">
+            Create Workout
+          </Button>
+        </div>
+      </div>
+
+      <div className="col-span-1 bg-zinc-800 p-4 rounded-xl">
+        <Label className="block text-center text-lg mb-5">
+          Add Multiple Exercises
+        </Label>
+        <AddExerciseForm addExercise={addExercise} />
+      </div>
+    </form>
   );
 };
 

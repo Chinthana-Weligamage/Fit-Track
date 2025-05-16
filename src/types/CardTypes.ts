@@ -11,10 +11,10 @@ export interface Post {
 }
 
 export interface Exercise {
-  imageUrl: string;
-  name: string;
-  description: string;
-  order: number;
+  imageUrl?: string;
+  name?: string;
+  description?: string;
+  order?: number;
 }
 
 export interface Comment {
@@ -33,10 +33,10 @@ export interface WorkoutCard {
 export interface Workout {
   id?: string;
   metadata?: Metadata;
-  name: string;
-  description: string;
-  exercises: Exercise[];
-  imageUrl: string[];
+  name?: string;
+  description?: string;
+  exercises?: Exercise[];
+  imageUrl?: string[];
 }
 
 export interface Achievement {

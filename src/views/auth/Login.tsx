@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { useEffect } from "react";
 import axios from "axios";
 import API_SERVICES from "@/lib/api_services";
+// import { googleSignIn } from "@/config/login";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -23,6 +24,10 @@ const LoginPage = () => {
       // Handle error (show message to user)
     }
   };
+
+  // const handleGoogleLogin = () => {
+  //   const res = googleSignIn();
+  // };
 
   // Handle the redirect back from Google OAuth
   useEffect(() => {
