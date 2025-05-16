@@ -22,6 +22,7 @@ const ViewAchievements = Loadable(
   lazy(() => import("../views/achievements/ViewAchievements"))
 );
 const ViewQuiz = Loadable(lazy(() => import("../views/quiz/ViewQuiz")));
+const AiAdvisor = Loadable(lazy(() => import("../views/ai-advisor/AiAdvisor")));
 const Settings = Loadable(lazy(() => import("../views/settings/Settings")));
 
 // // Dashboard
@@ -51,6 +52,7 @@ const Router = [
       { path: "/workouts", exact: true, element: <ViewWorkouts /> },
       { path: "/achievements", exact: true, element: <ViewAchievements /> },
       { path: "/quiz", exact: true, element: <ViewQuiz /> },
+      { path: "/ai", exact: true, element: <AiAdvisor /> },
       { path: "/settings", exact: true, element: <Settings /> },
       { path: "*", element: <Navigate to="/404" /> },
     ],

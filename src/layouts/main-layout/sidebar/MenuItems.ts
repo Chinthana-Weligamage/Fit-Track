@@ -5,6 +5,7 @@ import {
   Trophy,
   Activity,
   Settings,
+  BotMessageSquare,
 } from "lucide-react";
 // Menu items.
 export const menuItems = [
@@ -32,6 +33,11 @@ export const menuItems = [
     title: "Fit-Quiz",
     url: "/quiz",
     icon: Activity,
+  },
+  {
+    title: "Ai Advisor",
+    url: "/ai",
+    icon: BotMessageSquare,
   },
   {
     title: "Settings",
