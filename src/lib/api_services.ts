@@ -1,6 +1,9 @@
 const BASE_URL = "http://localhost:8080";
 
 const API_SERVICES = {
+  // Email Registration
+  Register: `${BASE_URL}/api/users`,
+
   // Google OAuth Endpoints
   GoogleLogin: `${BASE_URL}/api/auth/google`,
   GoogleCallback: `${BASE_URL}/login/oauth2/code/google`,
