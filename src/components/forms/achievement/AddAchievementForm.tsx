@@ -196,7 +196,11 @@ const AddAchievementForm = ({ userId }: { userId: string }) => {
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            className="w-full bg-amber-300"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Sharing..." : "Share Achievement"}
           </Button>
         </form>

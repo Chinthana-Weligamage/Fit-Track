@@ -32,7 +32,7 @@ const ViewAchievements = () => {
       {loading ? (
         <p>Loading achievements...</p>
       ) : (
-        achievements.map((achievement, index) => (
+        achievements?.map((achievement, index) => (
           <AchievementCard key={index} achievement={achievement} />
         ))
       )}
