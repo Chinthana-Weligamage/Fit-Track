@@ -41,7 +41,7 @@ export function LoginForm({ handleGoogleLogin }: LoginFormProps) {
         localStorage.setItem("authToken", res.data);
         Swal.fire({
           title: "Success!",
-          text: "Your account has been created successfully!",
+          text: "You have logged in successfully!",
           icon: "success",
           theme: "dark",
           timer: 3000,
@@ -53,8 +53,8 @@ export function LoginForm({ handleGoogleLogin }: LoginFormProps) {
         const authTocken = localStorage.getItem("authToken");
         if (authTocken) {
           console.log("Token:", authTocken);
-          // // Redirect to the dashboard or any other page
-          // window.location.href = "/dashboard";
+          // Redirect to the dashboard or any other page
+          window.location.href = "/dashboard";
         }
       } else {
         throw new Error(res.data);
@@ -92,7 +92,7 @@ export function LoginForm({ handleGoogleLogin }: LoginFormProps) {
                   placeholder="your email"
                   onChange={handleInputChange}
                   name="email"
-                  value={formData.email}
+                  value={formData.email || ""}
                   required
                 />
               </div>
@@ -112,7 +112,7 @@ export function LoginForm({ handleGoogleLogin }: LoginFormProps) {
                   required
                   onChange={handleInputChange}
                   name="password"
-                  value={formData.password}
+                  value={formData.password || ""}
                 />
               </div>
               <div className="flex flex-col gap-3">

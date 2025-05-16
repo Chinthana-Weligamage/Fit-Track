@@ -78,7 +78,7 @@ export function RegisterForm() {
                   type="name"
                   placeholder="your name"
                   name="username"
-                  value={formData.username}
+                  value={formData.username || ""}
                   onChange={handleInputChange}
                   required
                 />
@@ -89,7 +89,7 @@ export function RegisterForm() {
                   id="email"
                   type="email"
                   placeholder="your email"
-                  value={formData.email}
+                  value={formData.email || ""}
                   onChange={handleInputChange}
                   name="email"
                   required
@@ -103,7 +103,7 @@ export function RegisterForm() {
                   id="password"
                   type="password"
                   name="password"
-                  value={formData.password}
+                  value={formData.password || ""}
                   onChange={handleInputChange}
                   required
                 />
