@@ -42,6 +42,7 @@ export function RegisterForm() {
           timerProgressBar: true,
           showConfirmButton: false,
         });
+        setFormData({});
       } else {
         throw new Error(res.data);
       }
@@ -54,6 +55,8 @@ export function RegisterForm() {
         showConfirmButton: true,
         confirmButtonColor: "#f59e0b",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -75,8 +78,8 @@ export function RegisterForm() {
                   id="name"
                   type="name"
                   placeholder="your name"
-                  name="name"
-                  value={formData.name}
+                  name="username"
+                  value={formData.username}
                   onChange={handleInputChange}
                   required
                 />
