@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,20 +10,70 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios from "axios";
+import Swal from "sweetalert2";
+import API_SERVICES from "@/lib/api_services";
+import type { LoginForm } from "@/types/FormTypes";
 
 interface LoginFormProps extends React.ComponentProps<"div"> {
   handleGoogleLogin: () => void;
   handleEmailLogin: () => void;
 }
 
-export function LoginForm({
-  className,
-  handleGoogleLogin,
-  handleEmailLogin,
-  ...props
-}: LoginFormProps) {
+export function LoginForm({ handleGoogleLogin }: LoginFormProps) {
+  const [formData, setFormData] = useState<LoginForm>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const res = await axios.post(API_SERVICES.Login, formData);
+      if (res.status === 200) {
+        // Store the token in local storage
+        localStorage.setItem("authToken", res.data);
+        Swal.fire({
+          title: "Success!",
+          text: "Your account has been created successfully!",
+          icon: "success",
+          theme: "dark",
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+        setFormData({});
+
+        const authTocken = localStorage.getItem("authToken");
+        if (authTocken) {
+          console.log("Token:", authTocken);
+          // // Redirect to the dashboard or any other page
+          // window.location.href = "/dashboard";
+        }
+      } else {
+        throw new Error(res.data);
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error instanceof Error ? error.message : String(error),
+        icon: "error",
+        theme: "dark",
+        showConfirmButton: true,
+        confirmButtonColor: "#f59e0b",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6")}>
       <Card>
         <CardHeader>
           <CardTitle>Login to Fit-Track!</CardTitle>
@@ -31,7 +82,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleEmailLogin}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
@@ -39,6 +90,9 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="your email"
+                  onChange={handleInputChange}
+                  name="email"
+                  value={formData.email}
                   required
                 />
               </div>
@@ -52,10 +106,21 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  onChange={handleInputChange}
+                  name="password"
+                  value={formData.password}
+                />
               </div>
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full bg-yellow-400">
+                <Button
+                  type="submit"
+                  className="w-full bg-yellow-400"
+                  disabled={isLoading}
+                >
                   Login
                 </Button>
                 <Button

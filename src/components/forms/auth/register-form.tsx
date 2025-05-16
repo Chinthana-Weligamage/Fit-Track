@@ -18,7 +18,6 @@ import type { RegisterForm } from "@/types/FormTypes";
 export function RegisterForm() {
   const [formData, setFormData] = useState<RegisterForm>({});
   const [isLoading, setIsLoading] = useState(false);
-  // const [error, setError] = useState<string | null>(null);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({

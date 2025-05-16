@@ -4,6 +4,9 @@ const API_SERVICES = {
   // Email Registration
   Register: `${BASE_URL}/api/users`,
 
+  // Email Login
+  Login: `${BASE_URL}/api/users/login`,
+
   // Google OAuth Endpoints
   GoogleLogin: `${BASE_URL}/api/auth/google`,
   GoogleCallback: `${BASE_URL}/login/oauth2/code/google`,
