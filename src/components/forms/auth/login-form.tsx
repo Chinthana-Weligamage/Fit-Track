@@ -52,12 +52,13 @@ export function LoginForm({ handleGoogleLogin }: LoginFormProps) {
 
         const authTocken = localStorage.getItem("authToken");
         if (authTocken) {
-          console.log("Token:", authTocken);
           // Redirect to the dashboard or any other page
-          // window.location.href = "/";
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 3000);
         }
       } else {
-        throw new Error(res.data);
+        throw new Error(`${res}`);
       }
     } catch (error) {
       Swal.fire({
