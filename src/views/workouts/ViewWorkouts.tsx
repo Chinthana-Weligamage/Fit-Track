@@ -1,25 +1,26 @@
 import { useEffect, useState } from "react";
 import WorkoutCard from "@/components/cards/WorkoutCard";
 import AddWorkoutModal from "./AddWorkout";
-import { Workout, Comment } from "@/types/CardTypes";
+import { Workout } from "@/types/CardTypes";
 import { fetchWorkouts } from "@/lib/fetch-utils";
 
 const ViewWorkouts = () => {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetchWorkouts();
+      setWorkouts(res);
+    } catch (error) {
+      console.error("Failed to fetch workouts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await fetchWorkouts();
-        setWorkouts(res);
-      } catch (error) {
-        console.error("Failed to fetch workouts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
 
@@ -36,12 +37,9 @@ const ViewWorkouts = () => {
       {workouts?.map((workout, index) => (
         <WorkoutCard
           key={index}
-          workout={{
-            name: workout.name,
-            description: workout.description,
-            exercises: workout.exercises,
-            imageUrl: workout.imageUrl,
-          }}
+          workout={workout}
+          onDeleted={fetchData}
+          onUpdated={fetchData}
         />
       ))}
     </div>

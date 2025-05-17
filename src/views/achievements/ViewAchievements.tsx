@@ -7,20 +7,19 @@ import { fetchAchievements } from "@/lib/fetch-utils";
 const ViewAchievements = () => {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(false);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetchAchievements();
+      setAchievements(res);
+    } catch (error) {
+      console.error("Error fetching achievements:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await fetchAchievements();
-        setAchievements(res);
-      } catch (error) {
-        console.error("Error fetching achievements:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -33,7 +32,11 @@ const ViewAchievements = () => {
         <p>Loading achievements...</p>
       ) : (
         achievements?.map((achievement, index) => (
-          <AchievementCard key={index} achievement={achievement} />
+          <AchievementCard
+            key={index}
+            achievement={achievement}
+            refresh={fetchData}
+          />
         ))
       )}
     </div>

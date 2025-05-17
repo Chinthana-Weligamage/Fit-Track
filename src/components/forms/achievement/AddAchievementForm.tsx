@@ -15,6 +15,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import axios from "axios";
+import Swal from "sweetalert2";
+import API_SERVICES from "@/lib/api_services";
+import { getCurrentLoggedInUser } from "@/lib/utils";
 
 const formSchema = z.object({
   description: z.string().min(1, "Description is required"),
@@ -39,81 +43,61 @@ const AddAchievementForm = ({ userId }: { userId: string }) => {
     },
   });
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "image" | "video"
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
-      form.setValue("image", file);
-      setImagePreview(URL.createObjectURL(file));
+      form.setValue(type, file);
+      const previewUrl = URL.createObjectURL(file);
+      type === "image"
+        ? setImagePreview(previewUrl)
+        : setVideoPreview(previewUrl);
     }
   };
 
-  const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      form.setValue("video", file);
-      setVideoPreview(URL.createObjectURL(file));
-    }
-  };
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
       const formData = new FormData();
       formData.append("description", values.description);
 
-      if (values.image) {
-        formData.append("image", values.image);
-      }
+      if (values.image) formData.append("image", values.image);
+      if (values.video) formData.append("video", values.video);
 
-      if (values.video) {
-        formData.append("video", values.video);
-      }
-
-      const response = await fetch(
-        `http://localhost:8080/api/achievements/share-achievement/1?userId=1`,
-        {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        }
+      const response = await axios.post(
+        `http://localhost:8080/api/achievements/share-achievement/1?userId=${userId}`,
+        formData
       );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Failed to share achievement");
-      }
+      const data = response.data;
 
-      const responseData = await response.json();
-      console.log("API Response:", responseData); // Debug log
-
-      // Ensure imageUrls is always an array, even if empty or undefined
-      const imageUrls = Array.isArray(responseData.imageUrls)
-        ? responseData.imageUrls
-        : responseData.imageUrl
-        ? [responseData.imageUrl]
+      const imageUrls = Array.isArray(data.imageUrls)
+        ? data.imageUrls
+        : data.imageUrl
+        ? [data.imageUrl]
         : [];
 
       setSubmittedData({
-        description: responseData.description || values.description,
-        imageUrls: imageUrls,
-        videoUrl: responseData.videoUrl || "",
+        description: data.description || values.description,
+        imageUrls,
+        videoUrl: data.videoUrl || "",
       });
 
       toast.success("Achievement shared successfully!");
-
-      // Reset form but keep previews for display
       form.reset({ description: "" });
     } catch (error) {
       console.error("Form submission error", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to share achievement. Please try again."
-      );
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Failed to share achievement. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="space-y-8">
@@ -122,7 +106,6 @@ const AddAchievementForm = ({ userId }: { userId: string }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-6 w-full mx-auto"
         >
-          {/* Description */}
           <FormField
             control={form.control}
             name="description"
@@ -140,11 +123,10 @@ const AddAchievementForm = ({ userId }: { userId: string }) => {
             )}
           />
 
-          {/* Image Upload */}
           <FormField
             control={form.control}
             name="image"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormLabel>Image (Optional)</FormLabel>
                 <FormControl>
@@ -152,7 +134,7 @@ const AddAchievementForm = ({ userId }: { userId: string }) => {
                     <Input
                       type="file"
                       accept="image/*"
-                      onChange={handleImageChange}
+                      onChange={(e) => handleFileChange(e, "image")}
                     />
                     {imagePreview && (
                       <img
@@ -168,11 +150,10 @@ const AddAchievementForm = ({ userId }: { userId: string }) => {
             )}
           />
 
-          {/* Video Upload */}
           <FormField
             control={form.control}
             name="video"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormLabel>Video (Optional)</FormLabel>
                 <FormControl>
@@ -180,7 +161,7 @@ const AddAchievementForm = ({ userId }: { userId: string }) => {
                     <Input
                       type="file"
                       accept="video/*"
-                      onChange={handleVideoChange}
+                      onChange={(e) => handleFileChange(e, "video")}
                     />
                     {videoPreview && (
                       <video
@@ -206,7 +187,6 @@ const AddAchievementForm = ({ userId }: { userId: string }) => {
         </form>
       </Form>
 
-      {/* Display submitted data */}
       {submittedData && (
         <div className="mt-8 p-6 border rounded-lg bg-gray-50 dark:bg-gray-900">
           <h3 className="text-lg font-semibold mb-4">Shared Achievement</h3>
@@ -216,41 +196,26 @@ const AddAchievementForm = ({ userId }: { userId: string }) => {
             <p>{submittedData.description}</p>
           </div>
 
-          {/* Handle both array and single image cases */}
-          {submittedData.imageUrls?.length > 0 ? (
+          {submittedData.imageUrls.length > 0 && (
             <div className="mb-4">
               <h4 className="font-medium">Images:</h4>
               <div className="flex flex-wrap gap-4 mt-2">
-                {submittedData.imageUrls.map(
-                  (url, index) =>
-                    url && (
-                      <img
-                        key={index}
-                        src={url}
-                        alt={`Achievement ${index}`}
-                        className="h-40 rounded-md object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = "none";
-                        }}
-                      />
-                    )
-                )}
+                {submittedData.imageUrls.map((url, index) => (
+                  <img
+                    key={index}
+                    src={url}
+                    alt={`Achievement ${index}`}
+                    className="h-40 rounded-md object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                ))}
               </div>
             </div>
-          ) : (
-            imagePreview && (
-              <div className="mb-4">
-                <h4 className="font-medium">Image:</h4>
-                <img
-                  src={imagePreview}
-                  alt="Achievement"
-                  className="mt-2 h-40 rounded-md object-cover"
-                />
-              </div>
-            )
           )}
 
-          {submittedData.videoUrl ? (
+          {submittedData.videoUrl && (
             <div className="mb-4">
               <h4 className="font-medium">Video:</h4>
               <video
@@ -259,17 +224,6 @@ const AddAchievementForm = ({ userId }: { userId: string }) => {
                 className="mt-2 h-40 rounded-md object-cover"
               />
             </div>
-          ) : (
-            videoPreview && (
-              <div className="mb-4">
-                <h4 className="font-medium">Video:</h4>
-                <video
-                  src={videoPreview}
-                  controls
-                  className="mt-2 h-40 rounded-md object-cover"
-                />
-              </div>
-            )
           )}
         </div>
       )}

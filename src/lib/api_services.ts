@@ -26,6 +26,7 @@ const API_SERVICES = {
   WorkoutPlans: `${BASE_URL}/api/workoutPlan`,
 
   Achievements: `${BASE_URL}/api/achievements`,
+  AchievementDelete: `${BASE_URL}/api/achievements/users/1/achievements`,
 
   Quiz: `${BASE_URL}/api/questions`,
 

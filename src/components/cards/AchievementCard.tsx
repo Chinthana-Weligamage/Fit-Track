@@ -13,10 +13,23 @@ import MetadataBadge from "../badges/MetadataBadge";
 import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import API_SERVICES from "@/lib/api_services";
 
 const MySwal = withReactContent(Swal);
 
-const AchievementCard: FC<AchievementCard> = ({ achievement }) => {
+const AchievementCard: FC<any> = ({
+  achievement,
+  refresh,
+}: {
+  achievement: {
+    imageUrls?: string[];
+    videoUrl?: string;
+    description?: string;
+    id?: string;
+    metadata?: any;
+  };
+  refresh: () => void;
+}) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -49,7 +62,7 @@ const AchievementCard: FC<AchievementCard> = ({ achievement }) => {
     if (result.isConfirmed) {
       try {
         await axios.delete(
-          `http://localhost:8080/api/achievements/users/1/achievements/${achievement.id}`
+          `${API_SERVICES.AchievementDelete}/${achievement.id}`
         );
 
         await MySwal.fire({
@@ -68,6 +81,8 @@ const AchievementCard: FC<AchievementCard> = ({ achievement }) => {
           text: "Failed to delete the achievement.",
           icon: "error",
         });
+      } finally {
+        refresh();
       }
     }
   };
@@ -106,6 +121,8 @@ const AchievementCard: FC<AchievementCard> = ({ achievement }) => {
         text: "Failed to update the achievement.",
         icon: "error",
       });
+    } finally {
+      refresh();
     }
   };
 

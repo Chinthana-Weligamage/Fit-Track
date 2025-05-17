@@ -11,6 +11,7 @@ export interface Post {
 }
 
 export interface Exercise {
+  imageUrl?: string | null;
   image?: string | File | null;
   name?: string;
   description?: string;
@@ -37,6 +38,7 @@ export interface Workout {
   description?: string;
   exercises?: Exercise[];
   imageUrl?: string[];
+  creatorId?: string;
 }
 
 export interface Achievement {
