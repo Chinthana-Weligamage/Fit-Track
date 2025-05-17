@@ -2,7 +2,7 @@ import QuizCard from "@/components/cards/QuizCard";
 import AddQuizModal from "./AddQuizModal";
 import { Quiz } from "@/types/CardTypes";
 import { useEffect, useState } from "react";
-import { fetchQuizs } from "@/lib/fetch-utils";
+import { fetchQuiz } from "@/lib/fetch-utils";
 import { s } from "node_modules/framer-motion/dist/types.d-DSjX-LJB";
 import { f } from "node_modules/react-router/dist/development/route-data-C12CLHiN.d.mts";
 
@@ -54,14 +54,14 @@ const sampleQuizs: Quiz[] = [
   },
 ];
 const ViewQuiz = () => {
-  const [quizs, setQuizs] = useState<Quiz[]>([]);
+  const [quizes, setQuizs] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await fetchQuizs();
+        const res = await fetchQuiz();
         setQuizs(res);
       } catch (error) {
         console.error("Error fetching quizs:", error);
@@ -82,7 +82,7 @@ const ViewQuiz = () => {
           <p className="text-lg text-gray-500">Loading quizs...</p>
         </div>
       )}
-      {quizs.map((quiz, index) => (
+      {quizes?.map((quiz, index) => (
         <QuizCard
           key={index}
           quiz={{

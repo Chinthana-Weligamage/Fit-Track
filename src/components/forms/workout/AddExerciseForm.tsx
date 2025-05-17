@@ -20,13 +20,14 @@ const AddExerciseForm: React.FC<AddExerciseFormProps> = ({ addExercise }) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setFormData((prev) => ({ ...prev, imageUrl: file }));
+    setFormData((prev) => ({ ...prev, image: file }));
   };
 
-  const addNewExercise = async () => {
+  const addNewExercise = () => {
     if (!formData.name) return;
     addExercise(formData);
     setFormData({});
+    (document.getElementById("exercise-image") as HTMLInputElement).value = "";
   };
 
   return (
@@ -66,7 +67,12 @@ const AddExerciseForm: React.FC<AddExerciseFormProps> = ({ addExercise }) => {
 
       <div>
         <Label className="block mb-2">Upload Image</Label>
-        <Input type="file" accept="image/*" onChange={handleFileChange} />
+        <Input
+          id="exercise-image"
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
       </div>
 
       <Button className="w-full bg-yellow-400" onClick={addNewExercise}>

@@ -11,7 +11,7 @@ export interface Post {
 }
 
 export interface Exercise {
-  imageUrl?: string | File;
+  image?: string | File | null;
   name?: string;
   description?: string;
   order?: number;
@@ -65,15 +65,15 @@ export interface QuizCard {
 export interface Quiz {
   id?: string;
   metadata?: Metadata;
-  name: string;
-  description: string;
-  questions: Questions[];
+  name?: string;
+  description?: string;
+  questions?: Questions[];
 }
 
 export interface Questions {
-  question: string;
-  options: string[];
-  answer: string;
+  question?: string;
+  options?: string[];
+  answer?: string;
 }
 
 export interface Metadata {

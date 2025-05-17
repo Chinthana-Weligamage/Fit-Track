@@ -21,9 +21,9 @@ export const fetchAchievements = async () => {
   }
 };
 
-export const fetchQuizs = async () => {
+export const fetchQuiz = async () => {
   try {
-    const response = await axios.get(API_SERVICES.Quizs);
+    const response = await axios.get(API_SERVICES.Quiz);
     console.log("Fetched quizs:", response.data);
     return response.data;
   } catch (error) {

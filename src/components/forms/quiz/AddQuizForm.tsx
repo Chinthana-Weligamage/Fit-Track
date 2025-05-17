@@ -1,109 +1,147 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import AddQuestionForm from "./AddQuestionForm";
-
-const formSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().optional(),
-  questions: z
-    .array(z.string())
-    .nonempty("Please at least one item")
-    .optional(),
-});
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import axios from "axios";
+import type { Quiz, Questions } from "@/types/CardTypes";
+import API_SERVICES from "@/lib/api_services";
+import { getCurrentLoggedInUser } from "@/lib/utils";
 
 const AddQuizForm = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      questions: ["React"],
-    },
-  });
+  const [quizData, setQuizData] = useState<Quiz>({});
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      console.log(values);
-      console.log(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
-    } catch (error) {
-      console.error("Form submission error", error);
-      console.error("Failed to submit the form. Please try again.");
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setQuizData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const addQuestion = (question: Questions) => {
+    setQuizData((prev) => ({
+      ...prev,
+      questions: [...(prev.questions || []), question],
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!quizData.name?.trim()) {
+      alert("Quiz name is required.");
+      return;
     }
-  }
 
-  // const QuestionCard = () => {};
+    if (quizData.questions?.length === 0) {
+      alert("Please add at least one question.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("name", quizData.name || "");
+      formData.append("description", quizData.description || "");
+      quizData.questions?.forEach((question, index) => {
+        formData.append(`questions[${index}]`, JSON.stringify(question));
+      });
+      const user = getCurrentLoggedInUser();
+      const response = await axios.post(
+        `${API_SERVICES.Quiz}/${user.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Quiz submitted successfully!");
+      } else {
+        alert("Failed to submit quiz. Please try again.");
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("An error occurred while submitting the quiz. Please try again.");
+    }
+  };
 
   return (
-    <Form {...form}>
+    <div className=" mx-auto w-full px-10 py-10 bg-zinc-900 text-white rounded-md grid grid-cols-2">
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-5 mx-auto w-full px-10"
+        className="col-span-1 flex flex-col gap-5 p-5 h-full"
+        onSubmit={handleSubmit}
       >
-        <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Quiz Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" type="" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="col-span-8">
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" type="text" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+        <div>
+          <Label className="block mb-2">Quiz Name</Label>
+          <Input
+            type="text"
+            name="name"
+            value={quizData.name || ""}
+            onChange={handleChange}
+            className="w-full p-2 rounded bg-zinc-800 text-white"
+          />
         </div>
 
-        <FormField
-          control={form.control}
-          name="questions"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="mb-3 text-center">Questions</FormLabel>
-              <AddQuestionForm />
-              {/* <FormDescription>Select multiple options.</FormDescription> */}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className="w-full">
-          Create Quiz
-        </Button>
+        <div>
+          <Label className="block mb-2">Description</Label>
+          <Input
+            type="text"
+            name="description"
+            value={quizData.description || ""}
+            onChange={handleChange}
+            className="w-full p-2 rounded bg-zinc-800 text-white"
+          />
+        </div>
+
+        <div>
+          <table className="mt-2 w-full text-sm text-left text-amber-400">
+            <thead>
+              <tr>
+                <th className="px-4 py-2">#</th>
+                <th className="px-4 py-2">Question Name</th>
+                <th className="px-4 py-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(quizData.questions || []).map((ex, idx) => (
+                <tr key={idx} className="border-t border-amber-400">
+                  <td className="px-4 py-2">{idx + 1}</td>
+                  <td className="px-4 py-2">{ex.question}</td>
+                  <td className="px-4 py-2">
+                    <Button
+                      className="bg-transparent text-white px-2 py-1 rounded-full w-6 h-6 flex items-center justify-center"
+                      onClick={() => {
+                        setQuizData((prev) => ({
+                          ...prev,
+                          questions: (prev.questions || []).filter(
+                            (_, i) => i !== idx
+                          ),
+                        }));
+                      }}
+                    >
+                      x
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex items-end justify-center h-full">
+          <Button className="w-full bg-yellow-400 mb-9" type="submit">
+            Create Quiz
+          </Button>
+        </div>
       </form>
-    </Form>
+
+      <div className="col-span-1 bg-zinc-800 p-4 rounded-xl">
+        <Label className="block text-center text-lg mb-5">
+          Add Multiple Questions
+        </Label>
+        <AddQuestionForm addQuestion={addQuestion} />
+      </div>
+    </div>
   );
 };
 

@@ -17,10 +17,13 @@ const AddWorkoutForm = () => {
   };
 
   const addExercise = (exercise: Exercise) => {
-    setWorkoutData((prev) => ({
-      ...prev,
-      exercises: [...(prev.exercises || []), exercise],
-    }));
+    setWorkoutData((prev) => {
+      const updatedExercises = [...(prev.exercises || []), exercise];
+      return {
+        ...prev,
+        exercises: updatedExercises,
+      };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,19 +34,33 @@ const AddWorkoutForm = () => {
       return;
     }
 
-    if (workoutData.exercises?.length === 0) {
+    if (!workoutData.exercises || workoutData.exercises.length === 0) {
       alert("Please add at least one exercise.");
       return;
     }
 
     try {
+      const user = getCurrentLoggedInUser();
       const formData = new FormData();
+
       formData.append("name", workoutData.name || "");
       formData.append("description", workoutData.description || "");
-      workoutData.exercises?.forEach((exercise, index) => {
-        formData.append(`exercises[${index}]`, JSON.stringify(exercise));
+
+      workoutData.exercises.forEach((exercise, index) => {
+        formData.append(`exercises[${index}].name`, exercise.name || "");
+        formData.append(
+          `exercises[${index}].description`,
+          exercise.description || ""
+        );
+        formData.append(
+          `exercises[${index}].order`,
+          String(exercise.order || "")
+        );
+        if (exercise.image instanceof File) {
+          formData.append(`exercises[${index}].image`, exercise.image);
+        }
       });
-      const user = getCurrentLoggedInUser();
+
       const response = await axios.post(
         `${API_SERVICES.WorkoutPlans}/${user.id}`,
         formData,
@@ -61,9 +78,7 @@ const AddWorkoutForm = () => {
       }
     } catch (error) {
       console.error("Submission error:", error);
-      alert(
-        "An error occurred while submitting the workout. Please try again."
-      );
+      alert("An error occurred while submitting the workout.");
     }
   };
 

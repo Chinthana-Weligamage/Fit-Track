@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://10.88.91.94:8080";
+// const BASE_URL = "http://localhost:8080"
 
 const API_SERVICES = {
   // Email Registration
@@ -26,7 +27,7 @@ const API_SERVICES = {
 
   Achievements: `${BASE_URL}/api/achievements`,
 
-  Quizs: `${BASE_URL}/api/questions`,
+  Quiz: `${BASE_URL}/api/questions`,
 
   WorkoutComments: `${BASE_URL}/api/workoutPlans/{workoutPlanId}/comments`,
 };
