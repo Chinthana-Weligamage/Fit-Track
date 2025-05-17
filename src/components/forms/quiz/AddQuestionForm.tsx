@@ -9,73 +9,41 @@ interface AddQuestionFormProps {
 }
 
 const AddQuestionForm: React.FC<AddQuestionFormProps> = ({ addQuestion }) => {
-  const [formData, setFormData] = useState<Questions>({});
+  const [formData, setFormData] = useState<Questions>({
+    question: "",
+  } as Questions);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setFormData((prev) => ({ ...prev, image: file }));
-  };
-
   const addNewQuestion = () => {
-    if (!formData.question) return;
+    if (!formData.question?.trim()) return;
     addQuestion(formData);
-    setFormData({});
-    (document.getElementById("question-image") as HTMLInputElement).value = "";
+    setFormData({ question: "" });
   };
 
   return (
-    <div className="space-y-3 w-full mx-auto py-10  p-5 rounded-lg text-white">
+    <div className="space-y-3 w-full mx-auto py-10 p-5 rounded-lg text-white">
       <div>
-        <Label className="block mb-2">Question Name</Label>
+        <Label className="block mb-2" htmlFor="question">
+          Question
+        </Label>
         <Input
+          id="question"
           type="text"
-          name="name"
-          value={formData.question || ""}
+          name="question"
+          value={formData.question}
           onChange={handleChange}
           className="w-full p-2 rounded bg-zinc-800 text-white"
         />
       </div>
 
-      <div>
-        <Label className="block mb-2">Description</Label>
-        <Input
-          type="text"
-          name="description"
-          value={formData.question || ""}
-          onChange={handleChange}
-          className="w-full p-2 rounded bg-zinc-800 text-white"
-        />
-      </div>
-
-      <div>
-        <Label className="block mb-2">Order</Label>
-        <Input
-          type="text"
-          name="order"
-          value={formData.question || ""}
-          onChange={handleChange}
-          className="w-full p-2 rounded bg-zinc-800 text-white"
-        />
-      </div>
-
-      <div>
-        <Label className="block mb-2">Upload Image</Label>
-        <Input
-          id="question-image"
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-      </div>
-
-      <Button className="w-full bg-yellow-400" onClick={addNewQuestion}>
+      <Button
+        className="w-full bg-yellow-400 text-black"
+        onClick={addNewQuestion}
+      >
         Add Question
       </Button>
     </div>

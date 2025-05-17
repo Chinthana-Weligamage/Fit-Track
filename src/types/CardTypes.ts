@@ -73,6 +73,7 @@ export interface Quiz {
 }
 
 export interface Questions {
+  [x: string]: ReactNode;
   question?: string;
   options?: string[];
   answer?: string;

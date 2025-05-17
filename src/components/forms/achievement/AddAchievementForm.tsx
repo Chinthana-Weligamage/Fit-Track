@@ -1,233 +1,180 @@
-"use client";
-
-import { useState } from "react";
-import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
+import { Label } from "@/components/ui/label";
 import Swal from "sweetalert2";
+import axios from "axios";
 import API_SERVICES from "@/lib/api_services";
-import { getCurrentLoggedInUser } from "@/lib/utils";
+import type { Workout } from "@/types/CardTypes";
+import { fetchWorkouts } from "@/lib/fetch-utils";
 
-const formSchema = z.object({
-  description: z.string().min(1, "Description is required"),
-  image: z.instanceof(File).optional(),
-  video: z.instanceof(File).optional(),
-});
+interface AddAchievementFormProps {
+  userId: string;
+}
 
-const AddAchievementForm = ({ userId }: { userId: string }) => {
+const AddAchievementForm: React.FC<AddAchievementFormProps> = ({ userId }) => {
+  const [description, setDescription] = useState("");
+  const [image, setImage] = useState<File | null>(null);
+  const [video, setVideo] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submittedData, setSubmittedData] = useState<{
-    description: string;
-    imageUrls: string[];
-    videoUrl: string;
-  } | null>(null);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      description: "",
-    },
-  });
+  const [workoutPlanId, setWorkoutPlanId] = useState<string | null>(null);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     type: "image" | "video"
   ) => {
     const file = e.target.files?.[0];
-    if (file) {
-      form.setValue(type, file);
-      const previewUrl = URL.createObjectURL(file);
-      type === "image"
-        ? setImagePreview(previewUrl)
-        : setVideoPreview(previewUrl);
+    if (!file) return;
+
+    const previewUrl = URL.createObjectURL(file);
+
+    if (type === "image") {
+      setImage(file);
+      setImagePreview(previewUrl);
+    } else {
+      setVideo(file);
+      setVideoPreview(previewUrl);
     }
   };
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  useEffect(() => {
+    fetchWorkouts().then((data) => setWorkouts(data));
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!description.trim()) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Please provide a description.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
+
     try {
       const formData = new FormData();
-      formData.append("description", values.description);
+      formData.append("description", description);
+      if (image) formData.append("image", image);
+      if (video) formData.append("video", video);
 
-      if (values.image) formData.append("image", values.image);
-      if (values.video) formData.append("video", values.video);
+      const endpoint = `${API_SERVICES.Achievements}/share-achievement/${workoutPlanId}?userId=${userId}`;
+      await axios.post(endpoint, formData);
 
-      const response = await axios.post(
-        `http://localhost:8080/api/achievements/share-achievement/1?userId=${userId}`,
-        formData
-      );
-
-      const data = response.data;
-
-      const imageUrls = Array.isArray(data.imageUrls)
-        ? data.imageUrls
-        : data.imageUrl
-        ? [data.imageUrl]
-        : [];
-
-      setSubmittedData({
-        description: data.description || values.description,
-        imageUrls,
-        videoUrl: data.videoUrl || "",
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Achievement shared successfully!",
       });
 
-      toast.success("Achievement shared successfully!");
-      form.reset({ description: "" });
-    } catch (error) {
-      console.error("Form submission error", error);
-      if (axios.isAxiosError(error) && error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("Failed to share achievement. Please try again.");
-      }
+      // Reset form
+      setDescription("");
+      setImage(null);
+      setVideo(null);
+      setImagePreview(null);
+      setVideoPreview(null);
+    } catch (error: any) {
+      console.error("Error submitting achievement:", error);
+      const message =
+        axios.isAxiosError(error) && error.response?.data?.message
+          ? error.response.data.message
+          : "Failed to share achievement.";
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: message,
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="space-y-8">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6 w-full mx-auto"
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6 p-6 bg-zinc-900 text-white rounded-lg"
+    >
+      {/* Workout Plan Dropdown */}
+      <div>
+        <Label className="block mb-2">Workout Plan</Label>
+        <select
+          name="workoutPlanId"
+          onChange={(e) => setWorkoutPlanId(e.target.value)}
+          value={workoutPlanId || ""}
+          className="w-full p-2 rounded bg-zinc-800 text-white"
         >
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="I have achieved this in 10 months"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+          <option value="">Select a workout</option>
+          {workouts?.map((workout) => (
+            <option key={workout.id} value={workout.id}>
+              {workout.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      {/* Description */}
+      <div>
+        <Label htmlFor="achievement-description">Description</Label>
+        <Input
+          id="achievement-description"
+          type="text"
+          placeholder="Describe your achievement..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="bg-zinc-800 text-white"
+        />
+      </div>
+
+      {/* Image Upload */}
+      <div>
+        <Label htmlFor="achievement-image">Upload Image (Optional)</Label>
+        <Input
+          id="achievement-image"
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleFileChange(e, "image")}
+        />
+        {imagePreview && (
+          <img
+            src={imagePreview}
+            alt="Achievement preview"
+            className="mt-2 h-40 object-cover rounded-md"
           />
+        )}
+      </div>
 
-          <FormField
-            control={form.control}
-            name="image"
-            render={() => (
-              <FormItem>
-                <FormLabel>Image (Optional)</FormLabel>
-                <FormControl>
-                  <div className="flex flex-col gap-2">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileChange(e, "image")}
-                    />
-                    {imagePreview && (
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="mt-2 h-40 rounded-md object-cover"
-                      />
-                    )}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+      {/* Video Upload */}
+      <div>
+        <Label htmlFor="achievement-video">Upload Video (Optional)</Label>
+        <Input
+          id="achievement-video"
+          type="file"
+          accept="video/*"
+          onChange={(e) => handleFileChange(e, "video")}
+        />
+        {videoPreview && (
+          <video
+            src={videoPreview}
+            controls
+            className="mt-2 h-40 object-cover rounded-md"
           />
+        )}
+      </div>
 
-          <FormField
-            control={form.control}
-            name="video"
-            render={() => (
-              <FormItem>
-                <FormLabel>Video (Optional)</FormLabel>
-                <FormControl>
-                  <div className="flex flex-col gap-2">
-                    <Input
-                      type="file"
-                      accept="video/*"
-                      onChange={(e) => handleFileChange(e, "video")}
-                    />
-                    {videoPreview && (
-                      <video
-                        src={videoPreview}
-                        controls
-                        className="mt-2 h-40 rounded-md object-cover"
-                      />
-                    )}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button
-            type="submit"
-            className="w-full bg-amber-300"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Sharing..." : "Share Achievement"}
-          </Button>
-        </form>
-      </Form>
-
-      {submittedData && (
-        <div className="mt-8 p-6 border rounded-lg bg-gray-50 dark:bg-gray-900">
-          <h3 className="text-lg font-semibold mb-4">Shared Achievement</h3>
-
-          <div className="mb-4">
-            <h4 className="font-medium">Description:</h4>
-            <p>{submittedData.description}</p>
-          </div>
-
-          {submittedData.imageUrls.length > 0 && (
-            <div className="mb-4">
-              <h4 className="font-medium">Images:</h4>
-              <div className="flex flex-wrap gap-4 mt-2">
-                {submittedData.imageUrls.map((url, index) => (
-                  <img
-                    key={index}
-                    src={url}
-                    alt={`Achievement ${index}`}
-                    className="h-40 rounded-md object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {submittedData.videoUrl && (
-            <div className="mb-4">
-              <h4 className="font-medium">Video:</h4>
-              <video
-                src={submittedData.videoUrl}
-                controls
-                className="mt-2 h-40 rounded-md object-cover"
-              />
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+      {/* Submit Button */}
+      <Button
+        type="submit"
+        className="w-full bg-yellow-400 text-black"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? "Sharing..." : "Share Achievement"}
+      </Button>
+    </form>
   );
 };
 

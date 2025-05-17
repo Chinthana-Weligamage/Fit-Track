@@ -1,20 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddQuestionForm from "./AddQuestionForm";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
-import type { Quiz, Questions } from "@/types/CardTypes";
+import type { Quiz, Questions, Workout } from "@/types/CardTypes";
 import API_SERVICES from "@/lib/api_services";
-import { getCurrentLoggedInUser } from "@/lib/utils";
+import { fetchWorkouts } from "@/lib/fetch-utils";
+import Swal from "sweetalert2";
 
 const AddQuizForm = () => {
-  const [quizData, setQuizData] = useState<Quiz>({});
+  const [quizData, setQuizData] = useState<Quiz>({
+    questions: [],
+    name: "",
+    description: "",
+  });
+  const [workoutPlanId, setWorkoutPlanId] = useState<string | null>(null);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setQuizData((prev) => ({ ...prev, [name]: value }));
-  };
+  useEffect(() => {
+    fetchWorkouts().then((data) => setWorkouts(data));
+  }, []);
 
   const addQuestion = (question: Questions) => {
     setQuizData((prev) => ({
@@ -23,122 +28,143 @@ const AddQuizForm = () => {
     }));
   };
 
+  const removeQuestion = (index: number) => {
+    setQuizData((prev) => ({
+      ...prev,
+      questions: (prev.questions || []).filter((_, i) => i !== index),
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!quizData.name?.trim()) {
-      alert("Quiz name is required.");
-      return;
+    if (!workoutPlanId) {
+      Swal.fire({
+        title: "Workout plan is required",
+        icon: "error",
+        timer: 3000,
+        showConfirmButton: false,
+      }).then(() => {
+        return;
+      });
     }
 
-    if (quizData.questions?.length === 0) {
-      alert("Please add at least one question.");
-      return;
+    if (!quizData.questions?.length) {
+      Swal.fire({
+        title: "Please add at least one question.",
+        icon: "error",
+        timer: 3000,
+        showConfirmButton: false,
+      }).then(() => {
+        return;
+      });
     }
 
     try {
-      const formData = new FormData();
-      formData.append("name", quizData.name || "");
-      formData.append("description", quizData.description || "");
-      quizData.questions?.forEach((question, index) => {
-        formData.append(`questions[${index}]`, JSON.stringify(question));
-      });
-      const user = getCurrentLoggedInUser();
-      const response = await axios.post(
-        `${API_SERVICES.Quiz}/${user.id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const payload = {
+        workoutPlanId: parseInt(workoutPlanId ?? "0"),
+        questions: (quizData.questions || []).map((q) => q.question),
+      };
 
-      if (response.status === 200) {
-        alert("Quiz submitted successfully!");
+      const response = await axios.post(API_SERVICES.Quiz, payload);
+
+      if (response.status === 200 || response.status === 201) {
+        Swal.fire({
+          title: "Success!",
+          text: "Quiz submitted successfully!",
+          icon: "success",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+        setQuizData({ questions: [], name: "", description: "" });
+        setWorkoutPlanId(null);
       } else {
-        alert("Failed to submit quiz. Please try again.");
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to submit quiz. Please try again.",
+          icon: "error",
+          timer: 3000,
+          showConfirmButton: false,
+        });
       }
     } catch (error) {
       console.error("Submission error:", error);
-      alert("An error occurred while submitting the quiz. Please try again.");
+      Swal.fire({
+        title: "Error!",
+        text: "An error occurred while submitting the quiz. Please try again.",
+        icon: "error",
+        timer: 3000,
+        showConfirmButton: false,
+      });
     }
   };
 
   return (
-    <div className=" mx-auto w-full px-10 py-10 bg-zinc-900 text-white rounded-md grid grid-cols-2">
+    <div className="mx-auto w-full px-10 py-10 bg-zinc-900 text-white rounded-md grid grid-cols-2 gap-6">
+      {/* Form Section */}
       <form
-        className="col-span-1 flex flex-col gap-5 p-5 h-full"
+        className="col-span-1 flex flex-col gap-5 p-5"
         onSubmit={handleSubmit}
       >
+        {/* Workout Plan Dropdown */}
         <div>
-          <Label className="block mb-2">Quiz Name</Label>
-          <Input
-            type="text"
-            name="name"
-            value={quizData.name || ""}
-            onChange={handleChange}
+          <Label className="block mb-2">Workout Plan</Label>
+          <select
+            name="workoutPlanId"
+            onChange={(e) => setWorkoutPlanId(e.target.value)}
+            value={workoutPlanId || ""}
             className="w-full p-2 rounded bg-zinc-800 text-white"
-          />
+          >
+            <option value="">Select a workout</option>
+            {workouts.map((workout) => (
+              <option key={workout.id} value={workout.id}>
+                {workout.name}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div>
-          <Label className="block mb-2">Description</Label>
-          <Input
-            type="text"
-            name="description"
-            value={quizData.description || ""}
-            onChange={handleChange}
-            className="w-full p-2 rounded bg-zinc-800 text-white"
-          />
-        </div>
-
-        <div>
-          <table className="mt-2 w-full text-sm text-left text-amber-400">
-            <thead>
-              <tr>
-                <th className="px-4 py-2">#</th>
-                <th className="px-4 py-2">Question Name</th>
-                <th className="px-4 py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(quizData.questions || []).map((ex, idx) => (
-                <tr key={idx} className="border-t border-amber-400">
-                  <td className="px-4 py-2">{idx + 1}</td>
-                  <td className="px-4 py-2">{ex.question}</td>
-                  <td className="px-4 py-2">
-                    <Button
-                      className="bg-transparent text-white px-2 py-1 rounded-full w-6 h-6 flex items-center justify-center"
-                      onClick={() => {
-                        setQuizData((prev) => ({
-                          ...prev,
-                          questions: (prev.questions || []).filter(
-                            (_, i) => i !== idx
-                          ),
-                        }));
-                      }}
-                    >
-                      x
-                    </Button>
-                  </td>
+        {/* Question Table */}
+        {(quizData.questions?.length || 0) > 0 && (
+          <div>
+            <table className="w-full text-sm text-left text-amber-400">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2">#</th>
+                  <th className="px-4 py-2">Question</th>
+                  <th className="px-4 py-2">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {(quizData.questions || []).map((q, idx) => (
+                  <tr key={idx} className="border-t border-amber-400">
+                    <td className="px-4 py-2">{idx + 1}</td>
+                    <td className="px-4 py-2">{q.question}</td>
+                    <td className="px-4 py-2">
+                      <Button
+                        type="button"
+                        className="bg-transparent text-white px-2 py-1 w-6 h-6 flex items-center justify-center"
+                        onClick={() => removeQuestion(idx)}
+                      >
+                        ×
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-        <div className="flex items-end justify-center h-full">
-          <Button className="w-full bg-yellow-400 mb-9" type="submit">
-            Create Quiz
-          </Button>
-        </div>
+        {/* Submit Button */}
+        <Button className="w-full bg-yellow-400 text-black mt-4" type="submit">
+          Create Quiz
+        </Button>
       </form>
 
-      <div className="col-span-1 bg-zinc-800 p-4 rounded-xl">
-        <Label className="block text-center text-lg mb-5">
-          Add Multiple Questions
-        </Label>
+      {/* Add Questions Panel */}
+      <div className="col-span-1 bg-zinc-800 p-6 rounded-xl">
+        <Label className="block text-center text-lg mb-5">Add Questions</Label>
         <AddQuestionForm addQuestion={addQuestion} />
       </div>
     </div>
