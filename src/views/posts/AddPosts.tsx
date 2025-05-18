@@ -1,9 +1,6 @@
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -29,7 +26,7 @@ const AddPostModal = () => {
           <DialogTitle className="text-center">Add Post</DialogTitle>
           {/* <DialogDescription>Add Post form will be here</DialogDescription> */}
         </DialogHeader>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center w-full">
           <AddPostForm />
         </div>
       </DialogContent>

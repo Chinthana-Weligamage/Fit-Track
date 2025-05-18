@@ -1,6 +1,15 @@
 import API_SERVICES from "@/lib/api_services";
 import axios from "axios";
 
+export const fetchPosts = async () => {
+  try {
+    const response = await axios.get(API_SERVICES.Posts);
+    console.log("Fetched Posts:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Posts:", error);
+  }
+};
 export const fetchWorkouts = async () => {
   try {
     const response = await axios.get(API_SERVICES.WorkoutPlans);

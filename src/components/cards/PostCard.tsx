@@ -7,13 +7,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Heart, CornerUpRight } from "lucide-react";
+import { Heart, CornerUpRight, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import type { PostCard } from "@/types/CardTypes";
 import MetadataBadge from "../badges/MetadataBadge";
+import { getCurrentLoggedInUser } from "@/lib/utils";
+import EditPostModal from "@/views/posts/EditPosts";
 
 const PostCard: FC<PostCard> = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
+  const user = getCurrentLoggedInUser();
+
+  const handleDelete = () => {
+    console.log("Deleting post:", post);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center w-full h-full">
       <Card>
@@ -48,10 +56,25 @@ const PostCard: FC<PostCard> = ({ post }) => {
             >
               <Heart fill={isLiked ? "yellow" : "none"} />
             </Button>
+            <div className="flex items-center gap-2">
+              {post?.creatorId === user?.id && (
+                <>
+                  <EditPostModal post={post} />
+                  <Button
+                    title="Delete"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleDelete}
+                  >
+                    <Trash2 />
+                  </Button>
+                </>
+              )}
 
-            <Button title="Share" variant="outline" size="icon">
-              <CornerUpRight />
-            </Button>
+              <Button title="Share" variant="outline" size="icon">
+                <CornerUpRight />
+              </Button>
+            </div>
           </div>
         </CardFooter>
       </Card>

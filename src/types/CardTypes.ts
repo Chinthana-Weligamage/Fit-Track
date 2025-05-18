@@ -3,6 +3,7 @@ export interface PostCard {
 }
 
 export interface Post {
+  creatorId?: string;
   id?: string;
   metadata?: Metadata;
   title: string;
@@ -73,7 +74,6 @@ export interface Quiz {
 }
 
 export interface Questions {
-  [x: string]: ReactNode;
   question?: string;
   options?: string[];
   answer?: string;

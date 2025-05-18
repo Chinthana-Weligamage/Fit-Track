@@ -5,9 +5,10 @@ import { Label } from "@/components/ui/label";
 import Swal from "sweetalert2";
 import axios from "axios";
 import API_SERVICES from "@/lib/api_services";
+import { Post } from "@/types/CardTypes";
 
-const AddPostForm: React.FC = () => {
-  const [description, setDescription] = useState("");
+const EditPostForm: React.FC<{ post: Post }> = ({ post }) => {
+  const [description, setDescription] = useState(post.description);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,12 +48,9 @@ const AddPostForm: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append("description", description);
-      if (image) formData.append("imageUrls", image);
+      if (image) formData.append("image", image);
 
-      await axios.post(
-        "http://localhost:8080/api/workoutPost/users/1/posts",
-        formData
-      );
+      await axios.post(API_SERVICES.Posts, formData);
 
       Swal.fire({
         icon: "success",
@@ -131,4 +129,4 @@ const AddPostForm: React.FC = () => {
   );
 };
 
-export default AddPostForm;
+export default EditPostForm;
