@@ -33,6 +33,6 @@ const API_SERVICES = {
   WorkoutComments: `${BASE_URL}/api/workoutPlans/{workoutPlanId}/comments`,
 
   // Posts
-  CreatePosts: `${BASE_URL}/api/posts`,
+  Posts: `${BASE_URL}/api/posts`,
 };
 export default API_SERVICES;

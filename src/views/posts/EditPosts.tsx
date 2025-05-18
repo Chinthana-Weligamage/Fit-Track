@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { PencilLine } from "lucide-react";
 import EditPostForm from "@/components/forms/post/EditPostForm";
-import type { Post } from "@/types/CardTypes";
+import type { Post } from "@/components/cards/PostCard";
 
 const EditPostModal = ({ post }: { post: Post }) => {
   return (

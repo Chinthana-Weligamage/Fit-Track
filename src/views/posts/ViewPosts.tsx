@@ -1,25 +1,8 @@
 import { useState, useEffect } from "react";
 import PostCard from "@/components/cards/PostCard";
 import AddPostModal from "./AddPosts";
-import { Post } from "@/types/CardTypes";
-import { fetchPosts } from "@/lib/fetch-utils";
-
-const samplePosts = [
-  {
-    metadata: {
-      authorName: "John Doe",
-      publishedDate: "07th May 2023",
-      authorImage:
-        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
-    title: "Strength training session",
-    description:
-      "Building power one rep at a time – today’s sweat is tomorrow’s strength",
-    imageUrls: [
-      "https://images.unsplash.com/photo-1599058917212-d750089bc07e?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    ],
-  },
-];
+import axios from "axios";
+import type { Post } from "@/components/cards/PostCard";
 
 const ViewPosts = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -28,8 +11,8 @@ const ViewPosts = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetchPosts();
-      setPosts(res);
+      const res = await axios.get("http://localhost:8080/api/workoutPost");
+      setPosts(res.data);
     } catch (error) {
       console.error("Failed to fetch post:", error);
     } finally {
@@ -41,19 +24,28 @@ const ViewPosts = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    console.log(posts);
+  }, [posts]);
+
   return (
-    <div className="flex flex-col items-center w-full max-w-2xl mx-auto my-10 gap-6 px-4 overflow-y-auto">
+    <div className="relative w-full">
       <div className="fixed top-10 right-10 z-50">
         <AddPostModal />
       </div>
-      {loading && (
-        <div className="flex items-center justify-center w-full h-64">
-          <p className="text-lg text-gray-500">Loading posts...</p>
-        </div>
-      )}
-      {samplePosts?.map((post, index) => (
-        <PostCard key={index} post={post} />
-      ))}
+      <div className="flex flex-col items-center w-full max-w-2xl mx-auto my-10 gap-6 px-4 overflow-y-auto">
+        {loading ? (
+          <div className="flex items-center justify-center w-full h-64">
+            <p className="text-lg text-gray-500">Loading posts...</p>
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="text-gray-500 text-center mt-20">
+            No posts available.
+          </div>
+        ) : (
+          posts.map((post) => <PostCard key={post.id} post={post} />)
+        )}
+      </div>
     </div>
   );
 };

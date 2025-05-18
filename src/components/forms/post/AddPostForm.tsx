@@ -61,6 +61,8 @@ const AddPostForm: React.FC = () => {
         showConfirmButton: false,
         timerProgressBar: true,
         timer: 2000,
+      }).then(() => {
+        window.location.reload();
       });
 
       // Reset form

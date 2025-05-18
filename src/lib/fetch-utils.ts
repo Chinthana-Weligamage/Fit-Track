@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const fetchPosts = async () => {
   try {
-    const response = await axios.get(API_SERVICES.Posts);
+    const response = await axios.get("http://localhost:8080/api/workoutPost");
     console.log("Fetched Posts:", response.data);
     return response.data;
   } catch (error) {

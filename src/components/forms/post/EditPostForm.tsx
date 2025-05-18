@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import Swal from "sweetalert2";
 import axios from "axios";
 import API_SERVICES from "@/lib/api_services";
-import { Post } from "@/types/CardTypes";
+import { Post } from "@/components/cards/PostCard";
 
 const EditPostForm: React.FC<{ post: Post }> = ({ post }) => {
   const [description, setDescription] = useState(post.description);
@@ -48,18 +48,21 @@ const EditPostForm: React.FC<{ post: Post }> = ({ post }) => {
     try {
       const formData = new FormData();
       formData.append("description", description);
-      if (image) formData.append("image", image);
+      if (image) formData.append("imageUrls", image);
 
-      await axios.post(API_SERVICES.Posts, formData);
+      await axios.put(
+        `http://localhost:8080/api/workoutPost/${post.id}`,
+        formData
+      );
 
       Swal.fire({
         icon: "success",
         title: "Success",
-        text: "Post shared successfully!",
+        text: "Post Updated successfully!",
         showConfirmButton: false,
         timerProgressBar: true,
         timer: 2000,
-      });
+      }).then(() => window.location.reload());
 
       // Reset form
       setDescription("");
@@ -123,7 +126,7 @@ const EditPostForm: React.FC<{ post: Post }> = ({ post }) => {
         className="w-full bg-yellow-400 text-black"
         disabled={isSubmitting}
       >
-        {isSubmitting ? "Sharing..." : "Share Post"}
+        {isSubmitting ? "Sharing..." : "Update Post"}
       </Button>
     </form>
   );
